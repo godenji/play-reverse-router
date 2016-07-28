@@ -4,6 +4,7 @@ project/target
 target
 .target
 .cache
+.cache-main
 tmp
 .history
 dist
