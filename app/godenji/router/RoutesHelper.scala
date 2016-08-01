@@ -65,7 +65,7 @@ trait RoutesHelper {
 	)
 	
 	def cleanPackageName(c: HandlerCall): String = {
-		val parts = c.packageName.split("\\.").tail // omit "controllers."
+		val parts = c.packageName.split("\\.").filterNot(_ == "controllers")
 		if(parts.isEmpty) "root" // root package
 		else parts.mkString("_") // convert multi-package foo.bar to foo_bar
 	}
