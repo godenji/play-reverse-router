@@ -8,5 +8,4 @@ trait MyBuildSettings
   	moduleName: String, appDeps: Seq[ModuleID] = Seq()): Seq[Setting[_]] = {
     super._settings(moduleName, appDeps) ++ Seq()
   }
-    
 }
