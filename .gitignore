@@ -5,6 +5,7 @@ target
 .target
 .cache
 .cache-main
+/.cache-main
 tmp
 .history
 dist
