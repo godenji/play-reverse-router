@@ -12,6 +12,9 @@ trait ReverseRouter { self =>
 	/** fully qualified root package name (e.g. com.company) */
 	def packageName: String
 	
+	/** routerPackage of library (used to mixin generated library router trait) */
+	def libraryPackage: String
+	
 	private def systemPath = System.getProperty("user.dir")
 	def routerClassName = "Router"
 	def routerFileName = s"${routerClassName}.scala"
@@ -20,6 +23,12 @@ trait ReverseRouter { self =>
 	/** optional list of route paths to exclude from generated router */
 	def routeExcludes: List[String] = List.empty
 	
+	/** 
+	 *  optional list of route files to exclude from generated router 
+	 *	(needed when primary router depends on a library router)
+	 */
+	def routeFileExcludes: List[String] = List.empty
+	
 	trait RouterContract {
 		
 		/** relative path of project working directory (e.g. /module/foo/app/) */
@@ -27,6 +36,7 @@ trait ReverseRouter { self =>
 		
 		/** fully qualified package name of router (e.g. com.company.controller) */
 		def routerPackage: String = self.routerPackage
+		def libraryPackage: String = self.libraryPackage
 		
 		/** route generator entry point */
 		def routes2File(): Either[String, String]
@@ -40,7 +50,7 @@ trait ReverseRouter { self =>
 		
 		/** routes to exclude from generated router */
 		def routeExcludes = 
-			List("routegen") ++ self.routeExcludes
+			List("/routegen") ++ self.routeExcludes
 	}
 	
 	/** generate a server-side reverse router */
@@ -69,6 +79,7 @@ trait ReverseRouter { self =>
   	def routerContent(): String
   	def forBrowser: Boolean
 		
+  	val routeFileExcludes: List[String] = self.routeFileExcludes
 		val routerClassName = self.routerClassName
   	lazy val routes = collectRoutes
   	

@@ -11,12 +11,29 @@ trait Browser
 	private val runtime = "$"
 	
 	def routerContent() = {
-val prefix =
+		
+val header =
+	if(isLibraryRouter)
 s"""
 package $routerPackage
 ${routerBase()}
+"""
+	else
+s"""
+package $routerPackage
+$jsImports
+"""
 
-object $routerClassName 
+val classDef =
+s"""
+object $routerClassName extends $routerClassName 
+trait $routerClassName
+"""
+
+val content =
+	if(isLibraryRouter) 
+s"""
+$classDef
   extends RouterBase { self =>
 
   case class Route(method: String, uri: String) {
@@ -28,29 +45,42 @@ object $routerClassName
   private def encode[T](param: Option[T]) = {
     encodeURI(param.map(_.toString).getOrElse(""))
   }"""
+	else 
+s"""
+$classDef
+  extends ${libraryPackage}.controller.${routerClassName} {"""
 
 s"""
-$prefix
+$header
+$content
 ${routerBody()}
 }
 """
 	}
 	
 	private def routerBody(): String = {
-		routes.groupBy(x=> cleanPackageName(x.call)).map{case(pkg, routes) =>
-			val controllers = 
-				routes.groupBy(_.call.controller).map{case(ctrl, routes) =>
-					val methods = parseMethods(routes.filter(_.call.controller == ctrl))
-					s"""
-					|    object $ctrl {
-					|      ${methods.mkString("\n")}
-					|    }""".stripMargin
-				}
-		  s"""
-		  |  object $pkg {
-		  |    ${controllers.mkString("\n")}
-		  |  }\n""".stripMargin	  
-		}.mkString
+		val body = 
+			routes.groupBy(x=> cleanPackageName(x.call)).map{case(pkg, routes) =>
+				val controllers = 
+					routes.groupBy(_.call.controller).map{case(ctrl, routes) =>
+						val methods = parseMethods(routes.filter(_.call.controller == ctrl))
+						s"""
+						|    object $ctrl {
+						|      ${methods.mkString("\n")}
+						|    }""".stripMargin
+					}
+				val controllersString = controllers.mkString("\n")
+				if(pkg == "") s"  $controllersString\n"
+				else
+			  s"""
+			  |  object $pkg {
+			  |    ${controllers.mkString("\n")}
+			  |  }
+				""".stripMargin	  
+			}.mkString
+			
+		if(isLibraryRouter) wrapLibraryRoutes(body)
+		else body
 	}
 	
 	private def parseMethods(routes: List[Route]): List[String] = {

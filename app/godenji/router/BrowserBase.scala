@@ -7,13 +7,14 @@ trait BrowserBase {
 	/** custom route imports */
 	def routeImports: List[String]
 	
-  private[router] final def routerBase(): String = {
-		
-val imports = s"""
+	private[router] def jsImports =
+		s"""
 import org.scalajs.dom._
 import scala.scalajs.js.URIUtils.{encodeURIComponent => encodeURI}
 ${routeImports.map(x => s"import $x").mkString("\n")}
 """
+	
+  private[router] final def routerBase(): String = {
 		
 val base = s"""
 trait RouterBase extends RouterContract {
@@ -39,7 +40,7 @@ trait RouterBase extends RouterContract {
 }
 """
 	
-s"$imports$contract$base"
+s"$jsImports$contract$base"
 	}
 	
 	private def contract = 
