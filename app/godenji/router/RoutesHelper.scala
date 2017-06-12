@@ -63,8 +63,7 @@ trait RoutesHelper {
 	private lazy val routeFile = (
 		if(!config.underlying.hasPath("play.http.router")) rootRoutesFile 
 		else 
-			config.getString("play.http.router").map(_.toLowerCase).
-			getOrElse(rootRoutesFile)
+			config.get[String]("play.http.router").toLowerCase
   )
   
 	/** restrict routes to routeIncludes */

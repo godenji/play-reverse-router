@@ -33,6 +33,8 @@ trait $routerClassName
 val content =
 	if(isLibraryRouter) 
 s"""
+import scala.scalajs.js.URIUtils.{encodeURIComponent => encodeURI}
+
 $classDef
   extends RouterBase { self =>
 
@@ -40,11 +42,19 @@ $classDef
     override def toString() = uri
     def http  = s"$runtime{self.http}${runtime}uri"
     def https = s"$runtime{self.https}${runtime}uri"
+    def go2(millis: Long = 1200) =
+      scala.scalajs.js.timers.setTimeout(millis)(
+        window.location.href = uri
+      )
   }
 
-  private def encode[T](param: Option[T]) = {
+  def encode[T](param: Option[T]) = {
     encodeURI(param.map(_.toString).getOrElse(""))
-  }"""
+  }
+
+  def encode[T](param: T): String = {
+  	encodeURI(param.toString)
+	}"""
 	else 
 s"""
 $classDef
@@ -88,7 +98,7 @@ ${routerBody()}
 			val paths = 
 				x.path.parts.collect{
 					case(p: StaticPart)  => p.value
-					case(p: DynamicPart) => s"$runtime{encodeURI(${p.name})}"
+					case(p: DynamicPart) => s"$runtime{encode(${p.name})}"
 				}
 			val params = 
 				x.call.parameters.map(

@@ -18,7 +18,6 @@ trait ReverseRouter { self =>
 	private def systemPath = System.getProperty("user.dir")
 	def routerClassName = "Router"
 	def routerFileName = s"${routerClassName}.scala"
-	def routerPackage =  s"${packageName}.controller"
 	
 	/** optional list of route paths to exclude from generated router */
 	def routeExcludes: List[String] = List.empty
@@ -35,7 +34,7 @@ trait ReverseRouter { self =>
 		def projectPath: String
 		
 		/** fully qualified package name of router (e.g. com.company.controller) */
-		def routerPackage: String = self.routerPackage
+		def routerPackage: String = s"${packageName}.controller"
 		def libraryPackage: String = self.libraryPackage
 		
 		/** route generator entry point */

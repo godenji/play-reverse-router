@@ -10,7 +10,6 @@ trait BrowserBase {
 	private[router] def jsImports =
 		s"""
 import org.scalajs.dom._
-import scala.scalajs.js.URIUtils.{encodeURIComponent => encodeURI}
 ${routeImports.map(x => s"import $x").mkString("\n")}
 """
 	
