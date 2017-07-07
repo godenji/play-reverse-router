@@ -1,20 +1,20 @@
 package godenji.router
 
 trait BrowserBase {
-	/** domain name of application */
-	def siteDomain: String
-	
-	/** custom route imports */
-	def routeImports: List[String]
-	
-	private[router] def jsImports =
-		s"""
+  /** domain name of application */
+  def siteDomain: String
+
+  /** custom route imports */
+  def routeImports: List[String]
+
+  private[router] def jsImports =
+    s"""
 ${routeImports.map(x => s"import $x").mkString("\n")}
 """
-	
+
   private[router] final def routerBase(): String = {
-		
-val base = s"""
+
+    val base = s"""
 trait RouterBase extends RouterContract {
   val domain = window.location.host
 
@@ -35,12 +35,12 @@ trait RouterBase extends RouterContract {
   def https = domainWrap("HTTPS", isDev)
 }
 """
-	
-s"$jsImports$contract$base"
-	}
-	
-	private def contract = 
-"""
+
+    s"$jsImports$contract$base"
+  }
+
+  private def contract =
+    """
 trait RouterContract {
   def domain: String
   def siteDomain: String
