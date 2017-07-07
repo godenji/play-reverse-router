@@ -2,12 +2,15 @@ package godenji.router
 
 import play.routes.compiler._
 
-import play.api.mvc.{Controller => _Controller}
+import play.api.mvc.{BaseControllerHelpers, ControllerComponents}
 import play.api.{Configuration, Environment}
 import java.io.{File, PrintWriter}
 
 /** utility for generating server-side and client-side reverse routers */
-trait ReverseRouter { self =>
+trait ReverseRouter
+  extends BaseControllerHelpers { self =>
+
+  def controllerComponents: ControllerComponents
 	
 	/** fully qualified root package name (e.g. com.company) */
 	def packageName: String
@@ -67,10 +70,8 @@ trait ReverseRouter { self =>
 	}
 	
 	private[router] trait RouteMixin
-		extends _Controller 
-		with RoutesHelper 
-		with RouterContract {
-		
+		extends RoutesHelper with RouterContract {
+
 		def env: Environment
 		def config: Configuration
 		

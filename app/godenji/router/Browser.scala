@@ -5,7 +5,8 @@ import play.routes.compiler._
 trait Browser 
 	extends BrowserBase { self: ReverseRouter#RoutesBrowser =>
 		
-	val routeImports = List("godenji.model.key._") ++ _routeImports
+	val routeImports = 
+		List("org.scalajs.dom.window", "godenji.model.key._") ++ _routeImports
 	
 	/** "$" placeholder for runtime string interpolation */
 	private val runtime = "$"
@@ -38,6 +39,8 @@ import scala.scalajs.js.URIUtils.{encodeURIComponent => encodeURI}
 $classDef
   extends RouterBase { self =>
 
+  def siteDomain = "$siteDomain"
+
   case class Route(method: String, uri: String) {
     override def toString() = uri
     def http  = s"$runtime{self.http}${runtime}uri"
@@ -48,7 +51,16 @@ $classDef
       )
   }
 
-  def encode[T](param: Option[T]) = {
+  def encode[T](params: List[(String, Option[T])]): String = {
+    val args = 
+      params.filter(_._2.isDefined).map{ case (key, value) =>
+        s"$runtime{key}=$runtime{encode(value)}"
+      }
+    if(args.isEmpty) ""
+    else s"?$runtime{args.mkString("&")}"
+  }
+
+  def encode[T](param: Option[T]): String = {
     encodeURI(param.map(_.toString).getOrElse(""))
   }
 
@@ -58,7 +70,10 @@ $classDef
 	else 
 s"""
 $classDef
-  extends ${libraryPackage}.controller.${routerClassName} {"""
+  extends ${libraryPackage}.controller.${routerClassName} {
+
+  override val siteDomain = "$siteDomain"
+"""
 
 s"""
 $header
@@ -99,16 +114,20 @@ ${routerBody()}
 				x.path.parts.collect{
 					case(p: StaticPart)  => p.value
 					case(p: DynamicPart) => s"$runtime{encode(${p.name})}"
-				}
-			val params = 
-				x.call.parameters.map(
-					_.collect{case p if(p.typeName.startsWith("Option")) => 
-						s"${p.name}=$runtime{encode(${p.name})}"
-					}.mkString("&")
-				).filterNot(_ == "")
+				}.filterNot(_ == "/")
+			val uriPath = 
+				s"/${paths.mkString("/")}".replaceAll("//", "/")
 				
-			val uriPath   = s"/${paths.mkString("/")}".replaceAll("//", "/")
-			val uriParams = params.map(x=> s"?$x").mkString
+			val params = // List[("key", Option[T])] generated at runtime
+				x.call.parameters.map(
+					_.collect{
+						case p if(p.typeName.startsWith("Option")) =>
+							s""" "${p.name}" """.trim -> p.name
+					}
+				).toList.flatten
+			val uriParams =
+				if(params.isEmpty) "" else s"$runtime{encode($params)}"
+				
 			val methodParams = 
 				x.call.parameters.map{p=> 
 					p.map(_.toString.replace("?=", "=")).mkString(", ")

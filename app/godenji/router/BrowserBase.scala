@@ -9,7 +9,6 @@ trait BrowserBase {
 	
 	private[router] def jsImports =
 		s"""
-import org.scalajs.dom._
 ${routeImports.map(x => s"import $x").mkString("\n")}
 """
 	
@@ -19,10 +18,8 @@ val base = s"""
 trait RouterBase extends RouterContract {
   val domain = window.location.host
 
-	val(isDev,isSecure) = ( 
-    domain != "$siteDomain",
-    window.location.protocol == "https:"
-  )
+  def isDev = !domain.contains(siteDomain)
+	val isSecure = window.location.protocol == "https:"
   val port = window.location.port
   val httpPort = (
     if(port == "") "80" 
@@ -34,8 +31,8 @@ trait RouterBase extends RouterContract {
     else if(!isSecure && port != "80") port
     else "443"
   )
-  val http  = domainWrap(HTTP, isDev) 
-  val https = domainWrap(HTTPS, isDev)
+  def http  = domainWrap("HTTP", isDev) 
+  def https = domainWrap("HTTPS", isDev)
 }
 """
 	
@@ -46,6 +43,8 @@ s"$jsImports$contract$base"
 """
 trait RouterContract {
   def domain: String
+  def siteDomain: String
+
   /**
    * http link prefix
    * 	e.g. http://www.domain.com + optional :port
@@ -59,20 +58,16 @@ trait RouterContract {
   
   def httpPort: String
   def httpsPort: String
-  
-  protected sealed trait HttpProtocol
-	protected case object HTTP extends HttpProtocol
-	protected case object HTTPS extends HttpProtocol
 	
 	/** 
 	 * generate http(s) link prefix as:
 	 * 	http(s):// + www/sub + .domain + optional :(non-standard)port
 	 */
 	protected def domainWrap
-		(proto: HttpProtocol, isDev: Boolean): String = {
+		(proto: String, isDev: Boolean): String = {
 	  val port = (proto match {
-	    case HTTP  if httpPort 	!= "80" => s":$httpPort"  
-	    case HTTPS if httpsPort != "443" && !isDev => s":$httpsPort"
+	    case "HTTP"  if httpPort 	!= "80" => s":$httpPort"  
+	    case "HTTPS" if httpsPort != "443" && !isDev => s":$httpsPort"
 	    case _ => ""
 	  })
 	  val protoStr = proto.toString.toLowerCase
