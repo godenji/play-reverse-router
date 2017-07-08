@@ -23,7 +23,8 @@ trait Server { self: ReverseRouter#RoutesServer =>
           val padRoute = padSpaces(
             if (pkg == "") { // root package
               if (isLibraryRouter) 4 else 2
-            } else if (isLibraryRouter) 6
+            }
+            else if (isLibraryRouter) 6
             else 4
           )
           val routesString =
