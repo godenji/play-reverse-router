@@ -6,7 +6,7 @@ trait Browser
   extends BrowserBase { self: ReverseRouter#RoutesBrowser =>
 
   val routeImports =
-    List("org.scalajs.dom.window", "godenji.model.key._") ++ _routeImports
+    List("godenji.model.key._") ++ _routeImports
 
   /** "$" placeholder for runtime string interpolation */
   private val runtime = "$"
@@ -45,7 +45,7 @@ $classDef
     override def toString() = uri
     def http  = s"$runtime{self.http}${runtime}uri"
     def https = s"$runtime{self.https}${runtime}uri"
-    def go2(millis: Long = 1200) =
+    def go2(millis: Long = 800) =
       scala.scalajs.js.timers.setTimeout(millis)(
         window.location.href = uri
       )
