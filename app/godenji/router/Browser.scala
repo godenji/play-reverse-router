@@ -45,7 +45,7 @@ $classDef
     override def toString() = uri
     def http  = s"$runtime{self.http}${runtime}uri"
     def https = s"$runtime{self.https}${runtime}uri"
-    def go2(millis: Long = 800) =
+    def go2(millis: Long = 600) =
       scala.scalajs.js.timers.setTimeout(millis)(
         window.location.href = uri
       )
