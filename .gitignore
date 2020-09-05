@@ -22,3 +22,4 @@ bin/
 sbt-cache-config/
 sbt-cache-update/
 /ui
+.metals
