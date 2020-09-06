@@ -96,7 +96,7 @@ trait ReverseRouter
 
     private def writeRoutes(content: String, forBrowser: Boolean) = {
       val res = print2File(routerFile)(_.println(content))
-      res.right.map { unit =>
+      res.map { unit =>
         val which = if (forBrowser) "client-side" else "server-side"
         s"$which reverse router $routerFileName written to $routerPath"
       }

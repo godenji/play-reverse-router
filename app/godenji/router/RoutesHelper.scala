@@ -45,7 +45,7 @@ trait RoutesHelper {
         ).mkString
 
       val parsed = RoutesFileParser.parseContent(data, new File(routeFile))
-      parsed.right.toSeq.flatten.toList.collect {
+      parsed.toSeq.flatten.toList.collect {
         case (r: Route) =>
           List(r.copy(
             path = r.path.copy(Seq(StaticPart(prefix)) ++ r.path.parts)
@@ -85,7 +85,7 @@ trait RoutesHelper {
   )
 
   def cleanPackageName(c: HandlerCall): String = {
-    val parts = c.packageName.split("\\.").filterNot(_ == "controllers")
+    val parts = c.packageName.mkString.split("\\.").filterNot(_ == "controllers")
 
     // library router's routes are wrapped in outer libname {...} namespace
     // so no need to prefix each package a la libname_account {...}
