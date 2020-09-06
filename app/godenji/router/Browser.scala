@@ -65,8 +65,8 @@ $classDef
   }
 
   def encode[T](param: T): String = {
-  	encodeURI(param.toString)
-	}"""
+    encodeURI(param.toString)
+  }"""
       else
         s"""
 $classDef
@@ -92,18 +92,18 @@ ${routerBody()}
               case (ctrl, routes) =>
                 val methods = parseMethods(routes.filter(_.call.controller == ctrl))
                 s"""
-						|    object $ctrl {
-						|      ${methods.mkString("\n")}
-						|    }""".stripMargin
+            |    object $ctrl {
+            |      ${methods.mkString("\n")}
+            |    }""".stripMargin
             }
           val controllersString = controllers.mkString("\n")
           if (pkg == "") s"  $controllersString\n"
           else
             s"""
-			  |  object $pkg {
-			  |    ${controllers.mkString("\n")}
-			  |  }
-				""".stripMargin
+        |  object $pkg {
+        |    ${controllers.mkString("\n")}
+        |  }
+        """.stripMargin
       }.mkString
 
     if (isLibraryRouter) wrapLibraryRoutes(body)
@@ -137,10 +137,10 @@ ${routerBody()}
 
       val method =
         s"""
-				|      def ${x.call.method}($methodParams) = Route(
-				|        "${x.verb}",
-				|        s"$uriPath$uriParams"
-				|      )""".stripMargin
+        |      def ${x.call.method}($methodParams) = Route(
+        |        "${x.verb}",
+        |        s"$uriPath$uriParams"
+        |      )""".stripMargin
       method
     }
   }

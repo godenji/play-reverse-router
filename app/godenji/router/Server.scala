@@ -34,10 +34,10 @@ trait Server { self: ReverseRouter#RoutesServer =>
           else {
             val pad = padRoute.dropRight(2)
             s"""
-					|${pad}object $pkg {
-					|$routesString
-					|${pad}}
-					|""".stripMargin
+          |${pad}object $pkg {
+          |$routesString
+          |${pad}}
+          |""".stripMargin
           }
       }.mkString
 
@@ -49,14 +49,14 @@ trait Server { self: ReverseRouter#RoutesServer =>
       )
 
     s"""package $routerPackage\n
-		|object $routerClassName extends $routerClassName
-		|trait $routerClassName $withLibraryRouter {$routesString} 
-		|""".stripMargin
+    |object $routerClassName extends $routerClassName
+    |trait $routerClassName $withLibraryRouter {$routesString} 
+    |""".stripMargin
   }
 
   /**
-   * 	library router is wrapped in outer `object libname {...}` namespace;
-   * 	`_root_` prefix is needed for controller path in case
+   *   library router is wrapped in outer `object libname {...}` namespace;
+   *   `_root_` prefix is needed for controller path in case
    *  libname and package name are the same
    */
   private def prefixPackageRoot: String = if (isLibraryRouter) "_root_." else ""
