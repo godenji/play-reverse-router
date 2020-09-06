@@ -5,8 +5,7 @@ import play.routes.compiler._
 trait Browser
   extends BrowserBase { self: ReverseRouter#RoutesBrowser =>
 
-  val routeImports =
-    List("godenji.model.key._") ++ _routeImports
+  val routeImports = _routeImports
 
   /** "$" placeholder for runtime string interpolation */
   private val runtime = "$"
