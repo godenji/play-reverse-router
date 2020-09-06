@@ -1,5 +1,3 @@
 logLevel := Level.Warn
 
-import meta.Build.Plugins._
-
-eclipseCommon(); play()
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.2")
