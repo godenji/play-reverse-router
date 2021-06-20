@@ -7,7 +7,7 @@ trait Server { self: ReverseRouter#RoutesServer =>
       routes.map(_.call).map { c =>
         (
           cleanPackageName(c),
-          s"val ${c.controller} = $prefixPackageRoot${c.packageName}.routes.${c.controller}"
+          s"val ${c.controller} = $prefixPackageRoot${c.packageName.getOrElse("")}.routes.${c.controller}"
         )
       }.
         groupBy(_._1). // group on package name
