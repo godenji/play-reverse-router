@@ -1,8 +1,8 @@
 import play.sbt.PlayScala
 import ReleaseTransformations._
 
-val scalaRelease = "2.13.6"
-val scalaCrossVersions = Seq("2.12.14", scalaRelease)
+val scalaRelease = "2.13.12"
+val scalaCrossVersions = Seq("2.12.18", scalaRelease)
 
 lazy val root =
   project.in(file(".")).settings(
@@ -15,7 +15,7 @@ lazy val root =
     description := "generates global reverse router for one to many Play subproject(s)",
     scalaVersion := scalaRelease,
     crossScalaVersions := scalaCrossVersions,
-    libraryDependencies += "com.typesafe.play" %% "routes-compiler" % "2.8.8" withSources(),
+    libraryDependencies += "com.typesafe.play" %% "routes-compiler" % "2.8.20" withSources(),
     releaseCrossBuild := true,
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
